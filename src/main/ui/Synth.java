@@ -1,4 +1,4 @@
-package sound;
+package ui;
 
 import model.ListOfNotes;
 
@@ -19,6 +19,8 @@ public class Synth {
 
     }
 
+    //MODIFIES: this
+    //EFFECTS: Loads and returns a synthesizer which can be later used to create sounds
     private Soundbank getSoundBank() {
         return synthesizer.getDefaultSoundbank();
     }

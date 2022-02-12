@@ -2,10 +2,10 @@ package ui;
 
 import model.ListOfNotes;
 import model.Notes;
-import sound.Synth;
 
 import java.util.Scanner;
 
+//Instrument application
 public class InstrumentApp {
     ListOfNotes lon;
     Notes note;
@@ -57,12 +57,14 @@ public class InstrumentApp {
         System.out.println("\tlisten -> Listen to all the notes you've played at once");
     }
 
+    //MODIFIES: this
+    //EFFECTS: Initializes a ui interface
     private void init() {
         input = new Scanner(System.in);
         input.useDelimiter("\n");
     }
 
-
+    //EFFECTS: Plays all notes in the list of notes at once
     public void playAll(ListOfNotes ln) {
         int i;
         int j = ln.size();

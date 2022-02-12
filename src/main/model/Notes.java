@@ -39,6 +39,7 @@ public class Notes {
 
     }
 
+    //EFFECTS: Returns a note
     public String getNote() {
         return str;
 

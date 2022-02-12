@@ -39,5 +39,23 @@ public class ListOfNotesTest {
 
     }
 
+    @Test
+    public void getNoteTest(){
+
+        note = new Notes(("g"));
+        lon.addNotes(note);
+        assertEquals("g",lon.getNote(0));
+
+    }
+
+    @Test
+    public void sizeTest(){
+        note = new Notes("s");
+        assertEquals(0, lon.size());
+        lon.addNotes(note);
+        assertEquals(1, lon.size());
+
+    }
+
 
 }

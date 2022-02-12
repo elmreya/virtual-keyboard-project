@@ -13,6 +13,7 @@ class NotesTest {
 
         note = new Notes("a");
 
+
     }
 
     @Test
@@ -25,8 +26,17 @@ class NotesTest {
 
     @Test
     public void convertNotesTest(){
-        assertEquals(24, note.convertNote("a"));
-        assertEquals(28, note.convertNote("g"));
+
+        assertEquals(60, note.convertNote("a"));
+        assertEquals(61, note.convertNote("s"));
+        assertEquals(62, note.convertNote("d"));
+        assertEquals(63, note.convertNote("f"));
+        assertEquals(64, note.convertNote("g"));
+        assertEquals(65, note.convertNote("h"));
+        assertEquals(66, note.convertNote("j"));
+        assertEquals(67, note.convertNote("k"));
+        assertEquals(68, note.convertNote("l"));
+        assertEquals(0, note.convertNote("n"));
 
     }
 
