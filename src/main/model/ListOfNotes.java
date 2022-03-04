@@ -1,10 +1,14 @@
 package model;
 
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListOfNotes {
+public class ListOfNotes implements Writable {
     private List<String> lon;
     private String str;
 
@@ -12,7 +16,6 @@ public class ListOfNotes {
     //EFFECTS: Constructs a new list of notes, this list is initially empty
     public ListOfNotes() {
         lon = new ArrayList<>();
-
     }
 
     //MODIFIES: this
@@ -40,4 +43,24 @@ public class ListOfNotes {
         return lon.get(i);
 
     }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("List of Notes", lonToJson());
+        return json;
+    }
+
+    // EFFECTS: returns things in this workroom as a JSON array
+    private JSONArray lonToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (String s : lon) {
+            Notes t = new Notes(s);
+            jsonArray.put(t.toJson());
+        }
+        return jsonArray;
+    }
+
+
 }

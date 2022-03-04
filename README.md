@@ -20,6 +20,10 @@ interesting application that incorporates music into it.
 - As a user, I want to view the notes I've played.
 - As a user, I want to hear the notes I've played at once.
 
+
+- As a user, I want to save my list of notes list to file.
+- As a user, I want to be able to load my list of notes list from file.
+
 Note:
 I've used template and some code from the following repositories:-
 -TellerApp
