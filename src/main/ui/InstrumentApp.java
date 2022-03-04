@@ -51,10 +51,7 @@ public class InstrumentApp {
             } else if (command.equals("load")) {
                 loadLON();
             } else {
-                note = new Notes(command);
-                synth.setUp();
-                synth.play(note.convertNote(command));
-                lon.addNotes(note);
+                playInstrument(command);
             }
         }
         System.out.println("\nGoodbye!");
@@ -112,6 +109,13 @@ public class InstrumentApp {
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
+    }
+
+    public void playInstrument(String command) {
+        note = new Notes(command);
+        synth.setUp();
+        synth.play(note.convertNote(command));
+        lon.addNotes(note);
     }
 
 
