@@ -4,7 +4,7 @@ import model.ListOfNotes;
 
 import javax.sound.midi.*;
 
-
+// Synthesizer for playing an instrument
 public class Synth {
 
     private Synthesizer synthesizer;

@@ -1,6 +1,6 @@
 package persistence;
 
-import jdk.jfr.Category;
+
 import model.ListOfNotes;
 import model.Notes;
 import org.json.JSONArray;
@@ -9,10 +9,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+
+// Reads the list of notes from the file
 public class JsonReader {
     private String source;
 
@@ -31,6 +32,7 @@ public class JsonReader {
         return parseLON(jsonObject);
     }
 
+    // EFFECTS: reads the file
     private String readFile(String source) throws IOException {
         StringBuilder notesBuilder = new StringBuilder();
 
