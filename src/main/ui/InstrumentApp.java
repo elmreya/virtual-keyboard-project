@@ -5,12 +5,29 @@ import model.Notes;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
 //Instrument application
-public class InstrumentApp {
+public class InstrumentApp extends JPanel
+        implements ListSelectionListener {
+
+    private JList list;
+    private JTextField noteName;
+    private JButton jbutton = new JButton("y1");
+    private DefaultListModel listModel;
+    private static final String addNote = "Add Note";
     ListOfNotes lon;
     Notes note;
     Synth synth = new Synth();
@@ -21,6 +38,40 @@ public class InstrumentApp {
 
     //EFFECTS: Runs the instrument app
     public InstrumentApp() {
+        super(new BorderLayout());
+        listModel = new DefaultListModel();
+        list = new JList(listModel);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
+        list.addListSelectionListener(this);
+        list.setVisibleRowCount(5);
+        JScrollPane listScrollPane = new JScrollPane(list);
+
+        JButton addNoteButton = new JButton(addNote);
+        AddANote addANote = new AddANote(addNoteButton);
+        addNoteButton.setActionCommand(addNote);
+        addNoteButton.addActionListener(addANote);
+        addNoteButton.setEnabled(false);
+
+        noteName = new JTextField(10);
+        noteName.addActionListener(addANote);
+        noteName.getDocument().addDocumentListener(addANote);
+     //   String name = listModel.getElementAt(
+     //           list.getSelectedIndex()).toString();
+
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new BoxLayout(buttonPane,
+                BoxLayout.LINE_AXIS));
+        buttonPane.add(Box.createHorizontalStrut(5));
+        buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
+        buttonPane.add(Box.createHorizontalStrut(5));
+        buttonPane.add(noteName);
+        buttonPane.add(addNoteButton);
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+
+        add(listScrollPane, BorderLayout.CENTER);
+        add(buttonPane, BorderLayout.PAGE_END);
+
 
         jsonReader = new JsonReader(JSON_STORE);
         jsonWriter = new JsonWriter(JSON_STORE);
@@ -30,6 +81,7 @@ public class InstrumentApp {
     }
 
     private void runInstrument() {
+
         boolean keepGoing = true;
         String command = null;
         lon = new ListOfNotes();
@@ -119,6 +171,115 @@ public class InstrumentApp {
     }
 
 
+    class AddANote implements ActionListener, DocumentListener {
+        private boolean alreadyEnabled = false;
+        private JButton button;
+
+
+        public AddANote(JButton button) {
+            this.button = button;
+        }
+
+
+        public void actionPerformed(ActionEvent e) {
+            String note = noteName.getText();
+
+            if (note.equals("")||!note.matches("a|s|d|f|g|h|j|k|l")) {
+                Toolkit.getDefaultToolkit().beep();
+                noteName.requestFocusInWindow();
+                noteName.selectAll();
+                return;
+            }
+
+            int index = list.getSelectedIndex(); //get selected index
+            if (index == -1) { //no selection, so insert at beginning
+                index = 0;
+            } else {           //add after the selected item
+                index++;
+            }
+
+            listModel.insertElementAt(note, listModel.size());
+            noteName.requestFocusInWindow();
+            noteName.setText("");
+
+            list.setSelectedIndex(index);
+            list.ensureIndexIsVisible(index);
+
+        }
+
+        //Required by DocumentListener.
+        public void insertUpdate(DocumentEvent e) {
+            enableButton();
+        }
+
+        //Required by DocumentListener.
+        public void removeUpdate(DocumentEvent e) {
+            handleEmptyTextField(e);
+        }
+
+        //Required by DocumentListener.
+        public void changedUpdate(DocumentEvent e) {
+            if (!handleEmptyTextField(e)) {
+                enableButton();
+            }
+        }
+
+
+        private void enableButton() {
+            if (!alreadyEnabled) {
+                button.setEnabled(true);
+            }
+        }
+
+        private boolean handleEmptyTextField(DocumentEvent e) {
+            if (e.getDocument().getLength() <= 0) {
+                button.setEnabled(false);
+                alreadyEnabled = false;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    //This method is required by ListSelectionListener.
+    public void valueChanged(ListSelectionEvent e) {
+        if (e.getValueIsAdjusting() == false) {
+
+            if (list.getSelectedIndex() == -1) {
+                //No selection, disable fire button.
+                jbutton.setEnabled(false);
+
+            } else {
+                //Selection, enable the fire button.
+                jbutton.setEnabled(true);
+            }
+        }
+    }
+
+    private static void createAndShowGUI() {
+        //Create and set up the window.
+        JFrame frame = new JFrame("Instrument App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Create and set up the content pane.
+        JComponent newContentPane = new InstrumentApp();
+        newContentPane.setOpaque(true); //content panes must be opaque
+        frame.setContentPane(newContentPane);
+
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        //Schedule a job for the event-dispatching thread:
+        //creating and showing this application's GUI.
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
 
 
 }
