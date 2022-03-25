@@ -5,6 +5,7 @@ import model.Notes;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -19,13 +20,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+
 //Instrument application
 public class InstrumentApp extends JPanel
         implements ListSelectionListener {
-
+    private ImageGUI imageGUI;
+    private String oneNote;
     private JList list;
     private JTextField noteName;
-    private JButton jbutton = new JButton("y1");
+    private JButton jbutton = new JButton("A");
     private DefaultListModel listModel;
     private static final String addNote = "Add Note";
     ListOfNotes lon;
@@ -35,10 +38,13 @@ public class InstrumentApp extends JPanel
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
     private static final String JSON_STORE = "./data/listOfNotes.json";
+    private static final String playThisNote = "Play Note";
+
 
     //EFFECTS: Runs the instrument app
     public InstrumentApp() {
         super(new BorderLayout());
+        JPanel p = new JPanel(new BorderLayout());
         listModel = new DefaultListModel();
         list = new JList(listModel);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -53,32 +59,40 @@ public class InstrumentApp extends JPanel
         addNoteButton.addActionListener(addANote);
         addNoteButton.setEnabled(false);
 
+
+        //jbutton = new JButton(playThisNote);
+        // jbutton.setActionCommand(playThisNote);
+        // jbutton.addActionListener(new NoteImage());
+
         noteName = new JTextField(10);
         noteName.addActionListener(addANote);
         noteName.getDocument().addDocumentListener(addANote);
-     //   String name = listModel.getElementAt(
-     //           list.getSelectedIndex()).toString();
+        //   String name = listModel.getElementAt(
+        //           list.getSelectedIndex()).toString();
 
         JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new BoxLayout(buttonPane,
-                BoxLayout.LINE_AXIS));
+        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+
+
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(noteName);
         buttonPane.add(addNoteButton);
-        buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         add(listScrollPane, BorderLayout.CENTER);
         add(buttonPane, BorderLayout.PAGE_END);
+        ImageIcon img = new ImageIcon("images/C - Note .png");
 
 
         jsonReader = new JsonReader(JSON_STORE);
         jsonWriter = new JsonWriter(JSON_STORE);
-
+        
         runInstrument();
 
     }
+
 
     private void runInstrument() {
 
@@ -184,7 +198,7 @@ public class InstrumentApp extends JPanel
         public void actionPerformed(ActionEvent e) {
             String note = noteName.getText();
 
-            if (note.equals("")||!note.matches("a|s|d|f|g|h|j|k|l")) {
+            if (note.equals("") || !note.matches("a|s|d|f|g|h|j|k|l")) {
                 Toolkit.getDefaultToolkit().beep();
                 noteName.requestFocusInWindow();
                 noteName.selectAll();
