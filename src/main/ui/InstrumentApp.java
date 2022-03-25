@@ -11,13 +11,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -39,7 +38,7 @@ public class InstrumentApp extends JPanel
     private JsonWriter jsonWriter;
     private static final String JSON_STORE = "./data/listOfNotes.json";
     private static final String playThisNote = "Play Note";
-
+    private List<String> stringList;
 
     //EFFECTS: Runs the instrument app
     public InstrumentApp() {
@@ -88,7 +87,7 @@ public class InstrumentApp extends JPanel
 
         jsonReader = new JsonReader(JSON_STORE);
         jsonWriter = new JsonWriter(JSON_STORE);
-        
+
         runInstrument();
 
     }
@@ -199,6 +198,7 @@ public class InstrumentApp extends JPanel
             String note = noteName.getText();
 
             if (note.equals("") || !note.matches("a|s|d|f|g|h|j|k|l")) {
+                saveLON();
                 Toolkit.getDefaultToolkit().beep();
                 noteName.requestFocusInWindow();
                 noteName.selectAll();
