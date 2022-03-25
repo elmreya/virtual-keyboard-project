@@ -70,25 +70,23 @@ public class InstrumentApp extends JPanel
         //           list.getSelectedIndex()).toString();
 
         JPanel buttonPane = new JPanel();
+
+        buttonPane.add(noteName);
+        buttonPane.add(addNoteButton);
+        method(buttonPane);
+        add(listScrollPane, BorderLayout.CENTER);
+        add(buttonPane, BorderLayout.PAGE_END);
+
+    }
+
+    public void method(JPanel buttonPane) {
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 
 
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
         buttonPane.add(Box.createHorizontalStrut(5));
-        buttonPane.add(noteName);
-        buttonPane.add(addNoteButton);
         buttonPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        add(listScrollPane, BorderLayout.CENTER);
-        add(buttonPane, BorderLayout.PAGE_END);
-        ImageIcon img = new ImageIcon("images/C - Note .png");
-
-
-        jsonReader = new JsonReader(JSON_STORE);
-        jsonWriter = new JsonWriter(JSON_STORE);
-
-        runInstrument();
 
     }
 
