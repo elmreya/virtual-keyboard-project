@@ -16,18 +16,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 
 //Instrument application
 public class InstrumentApp extends JPanel
         implements ListSelectionListener {
-    private ImageGUI imageGUI;
-    private String oneNote;
     private JList list;
     private JTextField noteName;
-    private JButton jbutton = new JButton("A");
+    private JButton jbutton;
     private DefaultListModel listModel;
     private static final String addNote = "Add Note";
     ListOfNotes lon;
@@ -37,20 +34,19 @@ public class InstrumentApp extends JPanel
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
     private static final String JSON_STORE = "./data/listOfNotes.json";
-    private static final String playThisNote = "Play Note";
-    private List<String> stringList;
+    private static final String loadThisNote = "Load Note";
 
     //EFFECTS: Runs the instrument app
     public InstrumentApp() {
         super(new BorderLayout());
-        JPanel p = new JPanel(new BorderLayout());
+        openJson();
         listModel = new DefaultListModel();
         list = new JList(listModel);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setSelectedIndex(0);
+        method2();
         list.addListSelectionListener(this);
         list.setVisibleRowCount(5);
         JScrollPane listScrollPane = new JScrollPane(list);
+
 
         JButton addNoteButton = new JButton(addNote);
         AddANote addANote = new AddANote(addNoteButton);
@@ -59,27 +55,28 @@ public class InstrumentApp extends JPanel
         addNoteButton.setEnabled(false);
 
 
-        //jbutton = new JButton(playThisNote);
-        // jbutton.setActionCommand(playThisNote);
-        // jbutton.addActionListener(new NoteImage());
+        jbutton = new JButton(loadThisNote);
+        method3();
 
         noteName = new JTextField(10);
         noteName.addActionListener(addANote);
         noteName.getDocument().addDocumentListener(addANote);
-        //   String name = listModel.getElementAt(
-        //           list.getSelectedIndex()).toString();
-
+        lon = new ListOfNotes();
         JPanel buttonPane = new JPanel();
 
-        buttonPane.add(noteName);
-        buttonPane.add(addNoteButton);
-        method(buttonPane);
+
+        method(buttonPane, noteName, jbutton, addNoteButton);
         add(listScrollPane, BorderLayout.CENTER);
         add(buttonPane, BorderLayout.PAGE_END);
 
     }
 
-    public void method(JPanel buttonPane) {
+    //MODIFIES: this
+    //EFFECTS: Sets up the buttons and also the layout (This method is used to get around the 25 lines limit)
+    public void method(JPanel buttonPane, JTextField noteName, JButton jbutton, JButton addNoteButton) {
+        buttonPane.add(jbutton);
+        buttonPane.add(noteName);
+        buttonPane.add(addNoteButton);
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 
 
@@ -90,63 +87,28 @@ public class InstrumentApp extends JPanel
 
     }
 
+    //EFFECTS: Sets up a JList (Used to save space)
+    public void method2() {
 
-    private void runInstrument() {
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
 
-        boolean keepGoing = true;
-        String command = null;
-        lon = new ListOfNotes();
-
-        init();
-        while (keepGoing) {
-            displayMenu();
-            command = input.next();
-            command = command.toLowerCase();
-
-            if (command.equals("q")) {
-                keepGoing = false;
-            } else if (command.equals("v")) {
-                System.out.println(lon.getListOfNotes());
-            } else if (command.equals("listen")) {
-                playAll(lon);
-            } else if (command.equals("save")) {
-                saveLON();
-            } else if (command.equals("load")) {
-                loadLON();
-            } else {
-                playInstrument(command);
-            }
-        }
-        System.out.println("\nGoodbye!");
     }
 
-    //EFFECTS: Displays menu
-    private void displayMenu() {
-        System.out.println("\nUse the 2nd row of keys to play the instrument");
-        System.out.println("\tv -> View all notes played");
-        System.out.println("\tq -> quit");
-        System.out.println("\tlisten -> Listen to all the notes you've played at once");
-        System.out.println("\tsave -> Save List of Notes to file");
-        System.out.println("\tload -> Load List of Notes from file");
+    //EFFECTS: Loads a button (Used to save space)
+    public void method3() {
+
+        jbutton.setActionCommand(loadThisNote);
+        jbutton.addActionListener(new LoadNotes());
+
     }
 
     //MODIFIES: this
-    //EFFECTS: Initializes a ui interface
-    private void init() {
-        input = new Scanner(System.in);
-        input.useDelimiter("\n");
-    }
+    //EFFECTS: Opens jsonWriter and jsonReader
+    public void openJson() {
 
-    //EFFECTS: Plays all notes in the list of notes at once
-    public void playAll(ListOfNotes ln) {
-        int i;
-        int j = ln.size();
-        for (i = 0; i < j; i++) {
-            String n = ln.getNote(i);
-            synth.play(note.convertNote(n));
-
-
-        }
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
 
     }
 
@@ -169,19 +131,33 @@ public class InstrumentApp extends JPanel
         try {
             lon = jsonReader.read();
             System.out.println("Loaded " + lon.getListOfNotes() + " from " + JSON_STORE);
+            for (int i = 0; i < lon.size(); i++) {
+                listModel.insertElementAt(lon.getNote(i), i);
+            }
+
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
     }
 
+    //EFFECTS: plays the given note on the instrument
     public void playInstrument(String command) {
         note = new Notes(command);
         synth.setUp();
         synth.play(note.convertNote(command));
-        lon.addNotes(note);
     }
 
+    //EFFECTS: loads from saved file.
+    class LoadNotes implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            loadLON();
 
+        }
+
+
+    }
+
+    //EFFECTS: Adds a note from the Text Field to the JList, also saves and plays the note
     class AddANote implements ActionListener, DocumentListener {
         private boolean alreadyEnabled = false;
         private JButton button;
@@ -196,7 +172,7 @@ public class InstrumentApp extends JPanel
             String note = noteName.getText();
 
             if (note.equals("") || !note.matches("a|s|d|f|g|h|j|k|l")) {
-                saveLON();
+
                 Toolkit.getDefaultToolkit().beep();
                 noteName.requestFocusInWindow();
                 noteName.selectAll();
@@ -209,14 +185,15 @@ public class InstrumentApp extends JPanel
             } else {           //add after the selected item
                 index++;
             }
-
+            lon.addNotes(new Notes(note));
             listModel.insertElementAt(note, listModel.size());
             noteName.requestFocusInWindow();
             noteName.setText("");
-
             list.setSelectedIndex(index);
             list.ensureIndexIsVisible(index);
 
+            saveLON();
+            playInstrument(note);
         }
 
         //Required by DocumentListener.
@@ -268,7 +245,7 @@ public class InstrumentApp extends JPanel
         }
     }
 
-    private static void createAndShowGUI() {
+    public static void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("Instrument App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -292,6 +269,68 @@ public class InstrumentApp extends JPanel
             }
         });
     }
+
+
+    //Old code to run the app in the console
+//    private void runInstrument() {
+//
+//        boolean keepGoing = true;
+//        String command = null;
+//        lon = new ListOfNotes();
+//
+//        init();
+//        while (keepGoing) {
+//            displayMenu();
+//            command = input.next();
+//            command = command.toLowerCase();
+//
+//            if (command.equals("q")) {
+//                keepGoing = false;
+//            } else if (command.equals("v")) {
+//                System.out.println(lon.getListOfNotes());
+//            } else if (command.equals("listen")) {
+//                playAll(lon);
+//            } else if (command.equals("save")) {
+//                saveLON();
+//            } else if (command.equals("load")) {
+//                loadLON();
+//            } else {
+//                playInstrument(command);
+//            }
+//        }
+//        System.out.println("\nGoodbye!");
+//    }
+//
+//    //EFFECTS: Displays menu
+//    private void displayMenu() {
+//        System.out.println("\nUse the 2nd row of keys to play the instrument");
+//        System.out.println("\tv -> View all notes played");
+//        System.out.println("\tq -> quit");
+//        System.out.println("\tlisten -> Listen to all the notes you've played at once");
+//        System.out.println("\tsave -> Save List of Notes to file");
+//        System.out.println("\tload -> Load List of Notes from file");
+//    }
+
+    //MODIFIES: this
+    //EFFECTS: Initializes a ui interface
+//    private void init() {
+//        input = new Scanner(System.in);
+//        input.useDelimiter("\n");
+//    }
+//
+//    //EFFECTS: Plays all notes in the list of notes at once
+//    public void playAll(ListOfNotes ln) {
+//        int i;
+//        int j = ln.size();
+//        for (i = 0; i < j; i++) {
+//            String n = ln.getNote(i);
+//            synth.play(note.convertNote(n));
+//
+//
+//        }
+//
+//    }
+
 
 
 }
