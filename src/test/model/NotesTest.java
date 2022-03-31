@@ -28,14 +28,14 @@ class NotesTest {
     public void convertNotesTest(){
 
         assertEquals(60, note.convertNote("a"));
-        assertEquals(61, note.convertNote("s"));
-        assertEquals(62, note.convertNote("d"));
-        assertEquals(63, note.convertNote("f"));
-        assertEquals(64, note.convertNote("g"));
-        assertEquals(65, note.convertNote("h"));
-        assertEquals(66, note.convertNote("j"));
-        assertEquals(67, note.convertNote("k"));
-        assertEquals(68, note.convertNote("l"));
+        assertEquals(62, note.convertNote("s"));
+        assertEquals(64, note.convertNote("d"));
+        assertEquals(65, note.convertNote("f"));
+        assertEquals(67, note.convertNote("g"));
+        assertEquals(69, note.convertNote("h"));
+        assertEquals(71, note.convertNote("j"));
+        assertEquals(72, note.convertNote("k"));
+        assertEquals(74, note.convertNote("l"));
         assertEquals(0, note.convertNote("n"));
 
     }
