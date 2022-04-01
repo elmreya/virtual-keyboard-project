@@ -24,6 +24,27 @@ interesting application that incorporates music into it.
 - As a user, I want to save my list of notes list to file.
 - As a user, I want to be able to load my list of notes list from file.
 
+
+Phase 4:
+Representative sample
+Added note a to List of Notes
+
+
+Fri Apr 01 13:21:35 PDT 2022
+Added note d to List of Notes
+
+
+Fri Apr 01 13:21:38 PDT 2022
+Added note g to List of Notes
+
+
+Fri Apr 01 13:21:40 PDT 2022
+Added note j to List of Notes
+
+
+Fri Apr 01 13:21:41 PDT 2022
+Added note l to List of Notes
+
 Note:
 I've used template and some code from the following repositories:-
 -TellerApp

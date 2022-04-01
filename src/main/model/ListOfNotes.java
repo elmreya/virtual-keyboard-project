@@ -23,6 +23,7 @@ public class ListOfNotes implements Writable {
     public void addNotes(Notes n) {
         str = n.getNote();
         lon.add(str);
+        EventLog.getInstance().logEvent(new Event("Added note " + str + " to List of Notes"));
 
     }
 

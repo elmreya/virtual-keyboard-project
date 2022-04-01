@@ -1,5 +1,8 @@
 package ui;
 
+import model.EventLog;
+import model.Exception.LogException;
+import model.FilePrinter;
 import model.ListOfNotes;
 import model.Notes;
 import persistence.JsonReader;
@@ -119,6 +122,7 @@ public class InstrumentApp extends JPanel
             jsonWriter.write(lon);
             jsonWriter.close();
             System.out.println("Saved " + lon.getListOfNotes() + " to " + JSON_STORE);
+
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);
         }
@@ -248,7 +252,18 @@ public class InstrumentApp extends JPanel
     public static void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("Instrument App");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+
+                FilePrinter lp = new FilePrinter();
+                lp.printLog(EventLog.getInstance());
+                System.exit(0);
+
+            }
+
+        });
+
 
         //Create and set up the content pane.
         JComponent newContentPane = new InstrumentApp();
@@ -259,6 +274,7 @@ public class InstrumentApp extends JPanel
         frame.pack();
         frame.setVisible(true);
     }
+
 
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
