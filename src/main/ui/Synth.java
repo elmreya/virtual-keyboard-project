@@ -1,6 +1,5 @@
 package ui;
 
-import model.ListOfNotes;
 
 import javax.sound.midi.*;
 

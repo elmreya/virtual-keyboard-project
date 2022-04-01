@@ -1,6 +1,6 @@
 package model;
 
-import model.Exception.LogException;
+
 import ui.LogPrinter;
 
 

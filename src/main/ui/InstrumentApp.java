@@ -1,7 +1,6 @@
 package ui;
 
 import model.EventLog;
-import model.Exception.LogException;
 import model.FilePrinter;
 import model.ListOfNotes;
 import model.Notes;
