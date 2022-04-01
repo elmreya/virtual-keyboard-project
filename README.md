@@ -46,8 +46,12 @@ Fri Apr 01 13:21:41 PDT 2022
 Added note l to List of Notes
 
 Phase 4: Task 3 
-
-
+One thing I would've changed if I had more time would be the way I implement Event Logs.
+There's an extra interface in the UI section (LogPrinter) that does not do every much. I'd change this and implement it
+in InstrumentApp. There's also a class (FilePrinter) in my model package, which performs very little on its own, 
+so I would implement all of its functions in my InstrumentApp.
+Also, my InstrumentApp and Synth are very difficult to understand, so I would write or extract methods to make the code 
+more readable. 
 
 
 Note:
